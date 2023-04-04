@@ -51,16 +51,6 @@ drawCanvas.addEventListener('mousemove', draw);
 drawCanvas.addEventListener('mouseup', stopDrawing);
 drawCanvas.addEventListener('mouseout', stopDrawing);
 
-// ----------------------------------
-// Canvas to show the pixelated image
-// ----------------------------------
-
-const showCanvas = document.getElementById("showCanvas");
-const showCtx = showCanvas.getContext("2d");
-
-showCanvas.width = canvasSize;
-showCanvas.height = canvasSize;
-
 // ------------------------
 // Create inference session
 // ------------------------
@@ -71,22 +61,12 @@ const session = await ort.InferenceSession.create('./model.onnx');
 // Button for running the prediction
 // ---------------------------------
 
-const button = document.getElementById("predictButton");
+const predictButton = document.getElementById("predictButton");
 
-button.addEventListener('click', predict);
+predictButton.addEventListener('click', predict);
 
 async function predict() {
 	const arr = imageToArray();
-
-	// helper: draw the pixelated version
-	for (let row = 0; row < imageSize; row += 1) {
-		for (let col = 0; col < imageSize; col += 1) {
-			let alpha = arr[row * imageSize + col];
-			alpha = Math.floor(alpha * 255);
-			showCtx.fillStyle = `rgb(${alpha}, ${alpha}, ${alpha})`;
-			showCtx.fillRect(col * canvasScale, row * canvasScale, canvasScale, canvasScale);
-		}
-	}
 
 	const inputTensor = new ort.Tensor('float32', arr, [1, imageSize, imageSize]);
 
@@ -126,3 +106,13 @@ function imageToArray() {
 
 	return arr;
 }
+
+// ------------------------------
+// Button for clearing the canvas
+// ------------------------------
+
+const clearButton = document.getElementById("clearButton");
+
+clearButton.addEventListener('click', () => {
+	drawCtx.clearRect(0, 0, canvasSize, canvasSize);
+});
