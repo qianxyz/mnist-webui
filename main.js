@@ -51,6 +51,12 @@ drawCanvas.addEventListener('mousemove', draw);
 drawCanvas.addEventListener('mouseup', stopDrawing);
 drawCanvas.addEventListener('mouseout', stopDrawing);
 
+// -------------------------------------------
+// Table containing the possibility of classes
+// -------------------------------------------
+
+const pTable = document.getElementById("pTable");
+
 // ------------------------
 // Create inference session
 // ------------------------
@@ -75,9 +81,11 @@ async function predict() {
 
 	const results = await session.run(feeds);
 
-	const output = results[session.outputNames[0]];
+	const output = results[session.outputNames[0]].data;
 
-	console.log(output);
+	for (let i = 0; i < 10; i += 1) {
+		pTable.rows[i].cells[1].innerHTML = output[i].toFixed(2);
+	}
 }
 
 // Convert the canvas into a Float32Array of length 28*28.
