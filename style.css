@@ -4,11 +4,11 @@ body {
 	align-items: center;
 }
 
-canvas {
+canvas#draw {
 	border: 1px solid red;
 }
 
-#chart {
+div#chart {
 	border: 1px solid red;
 	width: 280px;
 	height: 280px;
