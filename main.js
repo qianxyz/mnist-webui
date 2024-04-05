@@ -17,22 +17,22 @@ const session = await ort.InferenceSession.create("./model.onnx");
 const floatArr = new Float32Array(28 * 28);
 
 document.getElementById("predict").addEventListener("click", async () => {
-  const canvasData = ctx.getImageData(0, 0, 280, 280).data;
+  const canvasData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
-  // average 10x10 blocks to downscale input to 28x28
-  // TODO: Handle DPR on mobile
+  // average blocks to downscale input to 28x28
+  const blockSize = canvas.width / 28;
   for (let y = 0; y < 28; y++) {
     for (let x = 0; x < 28; x++) {
       let sum = 0;
-      for (let dy = 0; dy < 10; dy++) {
-        for (let dx = 0; dx < 10; dx++) {
-          const px = x * 10 + dx;
-          const py = y * 10 + dy;
-          const index = (py * 280 + px) * 4 + 3; // alpha channel
+      for (let dy = 0; dy < blockSize; dy++) {
+        for (let dx = 0; dx < blockSize; dx++) {
+          const px = x * blockSize + dx;
+          const py = y * blockSize + dy;
+          const index = (py * canvas.width + px) * 4 + 3; // alpha channel
           sum += canvasData[index];
         }
       }
-      const average = sum / 100;
+      const average = sum / (blockSize * blockSize);
       floatArr[y * 28 + x] = average / 255; // normalize to 0-1
     }
   }
