@@ -20,7 +20,7 @@ document.getElementById("predict").addEventListener("click", async () => {
   const canvasData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
   // average blocks to downscale input to 28x28
-  const blockSize = canvas.width / 28;
+  const blockSize = Math.floor(canvas.width / 28);
   for (let y = 0; y < 28; y++) {
     for (let x = 0; x < 28; x++) {
       let sum = 0;
