@@ -5,11 +5,10 @@ body {
 }
 
 canvas#draw {
-	border: 1px solid red;
+	border: 1px solid gray;
 }
 
 div#chart {
-	border: 1px solid red;
-	width: 280px;
+	width: 320px;
 	height: 280px;
 }
