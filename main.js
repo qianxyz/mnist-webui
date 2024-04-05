@@ -1,5 +1,35 @@
 // draw empty chart
-drawChart([]);
+const colorMax = "#0d6efd";
+const colorOthers = "#adb5bd";
+const chart = Highcharts.chart("chart", {
+  chart: { type: "column", margin: 0 },
+  credits: { enabled: false },
+  title: { text: undefined },
+  xAxis: {
+    categories: [..."0123456789"],
+    labels: { reserveSpace: false, y: -10 },
+  },
+  yAxis: { min: 0, max: 1, visible: false },
+  legend: { enabled: false },
+  tooltip: { enabled: false },
+  plotOptions: {
+    column: {
+      pointPadding: 0,
+      borderWidth: 0,
+      groupPadding: 0,
+      shadow: false,
+    },
+    series: {
+      colorByPoint: true,
+    },
+  },
+  series: [
+    {
+      data: Array(10).fill(0),
+      colors: Array(10).fill(colorOthers),
+    },
+  ],
+});
 
 // free drawing canvas from Fabric.js
 const fabricCanvas = new fabric.Canvas("draw", { isDrawingMode: true });
@@ -7,7 +37,11 @@ fabricCanvas.freeDrawingBrush.width = 20;
 
 document.getElementById("clear").addEventListener("click", () => {
   fabricCanvas.clear();
-  drawChart([]); // clear chart
+  // clear chart
+  chart.series[0].update({
+    data: Array(10).fill(0),
+    colors: Array(10).fill(colorOthers),
+  });
 });
 
 const canvas = document.getElementById("draw");
@@ -44,41 +78,12 @@ document.getElementById("predict").addEventListener("click", async () => {
   const results = await session.run(feeds);
   const output = results[session.outputNames[0]].data;
 
-  drawChart(output);
-});
-
-function drawChart(data) {
-  const colorMax = "#0d6efd";
-  const colorOthers = "#adb5bd";
-  const maxIndex = data.indexOf(Math.max(...data));
-  const colors = Array.from({ length: data.length }, () => colorOthers);
+  // draw chart
+  const maxIndex = output.indexOf(Math.max(...output));
+  const colors = Array(10).fill(colorOthers);
   colors[maxIndex] = colorMax;
-
-  Highcharts.chart("chart", {
-    chart: { type: "column", margin: 0 },
-    credits: { enabled: false },
-    title: { text: undefined },
-    xAxis: {
-      min: 0,
-      max: 9,
-      categories: [..."0123456789"],
-      labels: { reserveSpace: false, y: -10 },
-    },
-    yAxis: { min: 0, max: 1, visible: false },
-    legend: { enabled: false },
-    tooltip: { enabled: false },
-    plotOptions: {
-      column: {
-        pointPadding: 0,
-        borderWidth: 0,
-        groupPadding: 0,
-        shadow: false,
-      },
-      series: {
-        colorByPoint: true,
-        colors: colors,
-      },
-    },
-    series: [{ data: Array.from(data) }],
+  chart.series[0].update({
+    data: Array.from(output),
+    colors: colors,
   });
-}
+});
