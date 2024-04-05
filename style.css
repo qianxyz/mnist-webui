@@ -11,5 +11,5 @@ canvas {
 #chart {
 	border: 1px solid red;
 	width: 280px;
-	min-height: 280px;
+	height: 280px;
 }
